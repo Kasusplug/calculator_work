@@ -17,7 +17,7 @@ class Calculator:
     def __init__(self, file_name_read):
         self.file_name_read = file_name_read
 
-    def parse_excel(self):
+    def parse_excel(self, pol, container, dropoff):
         workbook = openpyxl.load_workbook(self.file_name_read)
         sheet = workbook.active
 
@@ -61,27 +61,32 @@ def get_pol(message):
     bot.register_next_step_handler(message, get_container)
 
 def get_container(message):
-    user_data[message.from_user.id]['pol'] = message.text.strip().lower()
-    bot.send_message(message.chat.id, 'Введите тип контейнера: ')
-    bot.register_next_step_handler(message, get_container)
+    user_data[message.from_user.id]['container'] = message.text.strip().lower()
+    bot.send_message(message.chat.id, 'Введите место сдачи порожнего контейнера: ')
+    bot.register_next_step_handler(message, get_dropoff)
 
+def get_dropoff(message):
+    user_data[message.from_user.id]['dropoff'] = message.text.strip().lower()
+    pol = user_data[message.from_user.id]['pol']
+    container = user_data[message.from_user.id]['container']
+    dropoff = user_data[message.from_user.id]['dropoff']
 
-@bot.message_handler(commands=['generate'])
-def generate(message):
+    calc = Calculator(file_name_read='calc_draft.xlsx')
+    results = calc.parse_excel(pol, container, dropoff)
+
+    if results:
+        for result in results:
+            bot.send_message(message.chat.id, result)
+    
+    else:
+        bot.send_message(message.chat.id, 'Совпадений не найдено((')
+
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton('Сгенерировать логи', callback_data="generate_logs"))
-    bot.send_message(message.chat.id, f'Для генерации логов нажмите на кнопку.', reply_markup=markup)
+    markup.add(types.InlineKeyboardButton('Начать заново', callback_data="count"))
+    bot.send_message(message.chat.id, 'Что бы посчитать еще раз нажмите на кнопку', reply_markup=markup)
+
+    user_data.pop(message.from_user.id, None)
 
 
-
-@bot.message_handler(commands=['count'])
-def count(message):
-    calc = Calculator(file_name_read='calc_draft.xlsx') 
-    calc.parse_excel()
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    markup.add(
-    types.InlineKeyboardButton('Еще раз', callback_data="start"))
-    bot.send_message(message.chat.id, 'test', reply_markup=markup)
-
-
-bot.polling()
+if __name__ == '__main__':
+    bot.polling()
