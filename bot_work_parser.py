@@ -21,17 +21,25 @@ class Calculator:
         workbook = openpyxl.load_workbook(self.file_name_read)
         sheet = workbook.active
 
-        results = []
-        for row in sheet.iter_rows(min_row=2, values_only=True): 
+        results = [] 
+        for row in sheet.iter_rows(min_row=2, values_only=True):
             country, pol_row, pod, container_row, railway, freight, unloading, service, shipping, dropoff_row = row
 
             if pol_row.strip().lower() == pol and dropoff_row.strip().lower() == dropoff:
                 if container == container_row:
-                    result = (f"Match found for 20DC: {{'country': {country}, 'pol': {pol}, 'pod': {pod}, 'container': {container}, \n"
-                              f"'railway rate': {railway}, 'freight price': {freight}, 'unloading price': {unloading}, \n"
-                              f"'shipping line': {shipping}, 'dropoff place': {dropoff}}}")
+                    result = (f"Найдено совпадение:\n"
+                    f"Страна: {country}\n"
+                    f"POL: {pol_row}\n"
+                    f"POD: {pod}\n"
+                    f"Контейнер: {container_row}\n"
+                    f"Ставка ЖД: {railway}\n"
+                    f"Ставка фрахт: {freight}\n"
+                    f"ПРР: {unloading}\n"
+                    f"Линия: {shipping}\n"
+                    f"Место сдачи порожнего: {dropoff_row}")
                     results.append(result)
-                return results
+        
+        return results
 
 @bot.message_handler(commands=['start'])
 def start_bot(message):
