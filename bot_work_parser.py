@@ -23,7 +23,7 @@ class Calculator:
 
         results = [] 
         for row in sheet.iter_rows(min_row=2, values_only=True):
-            country, pol_row, pod, container_row, railway, freight, unloading, service, shipping, dropoff_row = row
+            country, pol_row, pod, container_row, railway, freight, unloading, shipping, dropoff_row, validity, total = row
 
             if pol_row.strip().lower() == pol and dropoff_row.strip().lower() == dropoff:
                 if container == container_row:
@@ -36,7 +36,9 @@ class Calculator:
                     f"Ставка фрахт: {freight}\n"
                     f"ПРР: {unloading}\n"
                     f"Линия: {shipping}\n"
-                    f"Место сдачи порожнего: {dropoff_row}")
+                    f"Место сдачи порожнего: {dropoff_row}\n"
+                    f"Валидность: {validity}\n"
+                    f"Общая ставка: {total}\n")
                     results.append(result)
         
         return results
