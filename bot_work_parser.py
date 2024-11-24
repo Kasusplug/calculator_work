@@ -18,29 +18,34 @@ class Calculator:
         self.file_name_read = file_name_read
 
     def parse_excel(self, pol, container, dropoff):
-        workbook = openpyxl.load_workbook(self.file_name_read)
+        workbook = openpyxl.load_workbook(self.file_name_read, data_only=True)
         sheet = workbook.active
 
-        results = [] 
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-            country, pol_row, pod, container_row, railway, freight, unloading, shipping, dropoff_row, validity, total = row
+        results = []
+        for row in sheet.iter_rows(min_row=2, max_col=12, values_only=True): 
+            if len(row) != 12:
+                print(f"Пропущена строка из-за некорректной длины: {row}")
+                continue
+
+            country, pol_row, pod, container_row, railway, freight, unloading, shipping, dropoff_row, validity_from, validity_till, total = row
 
             if pol_row.strip().lower() == pol and dropoff_row.strip().lower() == dropoff:
                 if container == container_row:
                     result = (f"Найдено совпадение:\n"
-                    f"Страна: {country}\n"
-                    f"POL: {pol_row}\n"
-                    f"POD: {pod}\n"
-                    f"Контейнер: {container_row}\n"
-                    f"Ставка ЖД: {railway}\n"
-                    f"Ставка фрахт: {freight}\n"
-                    f"ПРР: {unloading}\n"
-                    f"Линия: {shipping}\n"
-                    f"Место сдачи порожнего: {dropoff_row}\n"
-                    f"Валидность: {validity}\n"
-                    f"Общая ставка: {total}\n")
+                            f"Страна: {country}\n"
+                            f"POL: {pol_row}\n"
+                            f"POD: {pod}\n"
+                            f"Контейнер: {container_row}\n"
+                            f"Ставка ЖД: {railway}\n"
+                            f"Ставка фрахт: {freight}\n"
+                            f"ПРР: {unloading}\n"
+                            f"Линия: {shipping}\n"
+                            f"Место сдачи порожнего: {dropoff_row}\n"
+                            f"Валидность от: {validity_from}\n"
+                            f"Валидность до: {validity_till}\n"
+                            f"Общая ставка: {total}\n")
                     results.append(result)
-        
+
         return results
 
 @bot.message_handler(commands=['start'])
