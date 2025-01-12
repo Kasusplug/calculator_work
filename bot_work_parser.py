@@ -20,38 +20,37 @@ class Calculator:
         sheet = workbook.active
 
         results = []
-        for row in sheet.iter_rows(min_row=2, max_col=17, values_only=True): 
-            if len(row) != 17:
+        for row in sheet.iter_rows(min_row=2, max_col=19, values_only=True): 
+            if len(row) != 19:
                 continue
 
-            # Unpack row
-            country, pol_row, pod, container_row, usage_type, freight, railway, convertation, shipping_line, dropoff_row, validity_from, validity_till, total, total_sale_AB, stability, comment, currency_course = row
+            country, pol_row, pod, railway_terminal, container_row, usage_type, freight, railway, railway_protection, convertation, shipping_line, dropoff_row, validity_from, validity_till, total, total_sale_AB, stability, comment, currency_course = row
 
-            # Normalize Excel data
             pol_row = (pol_row or "").strip().lower()
             container_row = (container_row or "").strip().lower()
             dropoff_row = (dropoff_row or "").strip().lower()
 
-            # Compare with user input
             if pol_row == pol and container_row == container and dropoff_row == dropoff:
                 result = (f"Найдено совпадение:\n"
                           f"Страна: {country}\n"
                           f"POL: {pol_row}\n"
                           f"POD: {pod}\n"
+                          f"ЖД терминал: {railway_terminal}\n"
                           f"Контейнер: {container_row}\n"
                           f"Пользование ктк: {usage_type}\n"
-                          f"Ставка фрахт: {freight}\n"
-                          f"Ставка ЖД: {railway}\n"
-                          f"Конвертация: {convertation}\n"
+                          f"Ставка фрахт: {freight} USD\n"
+                          f"Ставка ЖД: {railway} RUB\n"
+                          f"Ставка охрана ЖД: {railway_protection} RUB\n"
+                          f"Конвертация: {convertation} %\n"
                           f"Линия: {shipping_line}\n"
                           f"Место сдачи порожнего: {dropoff_row}\n"
                           f"Валидность от: {validity_from}\n"
                           f"Валидность до: {validity_till}\n"
-                          f"Общая ставка: {total}\n"
-                          f"Продажа A/B: {total_sale_AB}\n"
+                          f"Общая ставка: {total} USD\n"
+                          f"Продажа A/B: {total_sale_AB} USD\n"
                           f"Стабильность: {stability}\n"
                           f"Комментарий: {comment}\n"
-                          f"Курс валют: {currency_course}\n")
+                          f"Курс валют(RUB/USD): {currency_course}\n")
                 results.append(result)
 
         return results
