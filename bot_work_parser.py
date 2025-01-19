@@ -20,11 +20,11 @@ class Calculator:
         sheet = workbook.active
 
         results = []
-        for row in sheet.iter_rows(min_row=2, max_col=19, values_only=True): 
-            if len(row) != 19:
+        for row in sheet.iter_rows(min_row=2, max_col=20, values_only=True): 
+            if len(row) != 20:
                 continue
 
-            country, pol_row, pod, railway_terminal, container_row, usage_type, freight, railway, railway_protection, convertation, shipping_line, dropoff_row, validity_from, validity_till, total, total_sale_AB, stability, comment, currency_course = row
+            country, pol_row, pod, railway_terminal, container_row, max_weight, usage_type, freight, railway, railway_protection, convertation, shipping_line, dropoff_row, validity_from, validity_till, total, total_sale_AB, stability, comment, currency_course = row
 
             pol_row = (pol_row or "").strip().lower()
             container_row = (container_row or "").strip().lower()
@@ -38,6 +38,7 @@ class Calculator:
                           f"ЖД терминал: {railway_terminal}\n"
                           f"Контейнер: {container_row}\n"
                           f"Пользование ктк: {usage_type}\n"
+                          f"Максимальный вес: {max_weight}\n"
                           f"Ставка фрахт: {freight} USD\n"
                           f"Ставка ЖД: {railway} RUB\n"
                           f"Ставка охрана ЖД: {railway_protection} RUB\n"
@@ -92,7 +93,7 @@ def get_dropoff(message):
     container = user_data[message.from_user.id]['container']
     dropoff = user_data[message.from_user.id]['dropoff']
 
-    calc = Calculator(file_name_read='new_calc_draft.xlsx')
+    calc = Calculator(file_name_read='new_calc_draft1.xlsx')
     results = calc.parse_excel(pol, container, dropoff)
 
     if results:
